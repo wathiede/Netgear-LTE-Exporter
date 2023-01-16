@@ -27,18 +27,19 @@ class NetgearLTEMetrics:
         self.rx_level = Gauge("netgear_lte_rx_level", "RX Level")
         self.tx_level = Gauge("netgear_lte_tx_level", "TX Level")
         self.radio_quality = Gauge("netgear_lte_radio_quality", "Radio Quality")
-        self.usage = Gauge("netgear_lte_usage", "Usage")
+        self.data_usage = Gauge("netgear_lte_data_usage", "Data Usage")
 
-        # Prometheus metrics to collect
-        self.current_requests = Gauge("app_requests_current", "Current requests")
-        self.pending_requests = Gauge("app_requests_pending", "Pending requests")
+        self.spn_info = Info("netgear_lte_spn_info", "Information on SPN")
+        self.modem_info = Info("netgear_lte_modem_info", "Information on the modem")
 
-        self.app_version = Info("app_version", "Firmware version")
-        self.serial = Info("serial", "Serial Number")
-        self.data_usage = Gauge("data_usage", "Data usage")
 
-        self.total_uptime = Gauge("app_uptime", "Uptime")
-        self.health = Enum("app_health", "Health", states=["healthy", "unhealthy"])
+        self.wwan_info = Info("netgear_lte_wwan_info", "Connection information")
+        self.wwan_sessDuration = Gauge("netgear_lte_wwan_sess_duration", "Session Duration")
+        self.wwan_sessStartTime = Gauge("netgear_lte_sess_start_time", "Session Start Time")
+        self.wwan_dataTransferred_total = Gauge("netgear_lte_data_total", "Data transferred total")
+        self.wwan_dataTransferred_rxb = Gauge("netgear_lte_data_rxb", "Data transferred rxb")
+        self.wwan_dataTransferred_txb = Gauge("netgear_lte_data_txb", "Data transferred txb")
+
 
     def run_metrics_loop(self):
         """Metrics fetching loop"""
@@ -66,17 +67,27 @@ class NetgearLTEMetrics:
             self.rx_level.set(result.rx_level)
             self.tx_level.set(result.tx_level)
             self.radio_quality.set(result.radio_quality)
-            self.usage.set(result.usage)
-
-            # Update Prometheus metrics with application metrics
             self.data_usage.set(result.usage)
-            self.serial.info({"number":result.serial_number})
-            self.current_requests.set(2)
-            self.pending_requests.set(3)
-            self.total_uptime.set(1111)
-            self.health.state("healthy")
 
-            
+            # self.spn_info.info({'spn_name':})
+            self.modem_info.info({
+                'model':result.items['general.model'],
+                'fw_version':result.items['general.fwversion'],
+                'app_version':result.items['general.appversion'],
+                'network_display':result.items['wwan.registernetworkdisplay']
+            })
+
+            self.wwan_info.info({
+                'connection_text':result.items['wwan.connectiontext'],
+                'curBand':result.items['wwanadv.curband']
+            })
+            self.wwan_sessDuration.set(result.items['wwan.sessduration'])
+            self.wwan_sessStartTime.set(result.items['wwan.sessstarttime'])
+            self.wwan_dataTransferred_total.set(result.items['wwan.datatransferred.totalb'])
+            self.wwan_dataTransferred_rxb.set(result.items['wwan.datatransferred.rxb'])
+            self.wwan_dataTransferred_txb.set(result.items['wwan.datatransferred.txb'])
+
+
             await modem.logout()
         except eternalegypt.Error:
             print("Could not login")
