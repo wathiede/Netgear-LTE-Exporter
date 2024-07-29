@@ -9,4 +9,9 @@ setup(
     description='Netgear LTE Modem Exporter',
     py_modules=['main.py'],
     install_requires=['prometheus_client', 'eternalegypt', 'python-dotenv'],
+    entry_points={  # Optional
+        "console_scripts": [
+            "netgear-lte-exporter=netgear-lte-exporter:main",
+        ],
+    },
 )
