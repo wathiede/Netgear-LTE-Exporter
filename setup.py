@@ -11,7 +11,7 @@ setup(
     install_requires=['prometheus_client', 'eternalegypt', 'python-dotenv'],
     entry_points={  # Optional
         "console_scripts": [
-            "netgear_lte_exporter=netgear_lte_exporter:main",
+            "netgear_lte_exporter=netgear_lte_exporter.main:main",
         ],
     },
 )
