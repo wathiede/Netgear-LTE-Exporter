@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='Netgear-LTE-Exporter',
+    name='netgear-lte-exporter',
     version='0.0.1',
     url='https://github.com/wathiede/Netgear-LTE-Exporter',
     author='Bill Thiede',
@@ -11,7 +11,7 @@ setup(
     install_requires=['prometheus_client', 'eternalegypt', 'python-dotenv'],
     entry_points={  # Optional
         "console_scripts": [
-            "netgear-lte-exporter=main:main",
+            "netgear-lte-exporter=netgear-lte-exporter:main",
         ],
     },
 )
