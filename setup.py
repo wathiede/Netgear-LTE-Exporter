@@ -7,6 +7,6 @@ setup(
     author='Bill Thiede',
     author_email='git@xinu.tv',
     description='Netgear LTE Modem Exporter',
-    packages=find_packages(),    
+    py_modules=['main.py'],
     install_requires=['prometheus_client', 'eternalegypt', 'python-dotenv'],
 )
